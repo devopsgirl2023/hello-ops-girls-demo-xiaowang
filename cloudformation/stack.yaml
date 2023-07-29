@@ -20,9 +20,9 @@ Resources:
   Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-09964535fc01efa5f
+      ImageId: ami-06b79cf2aee0d5c92
       InstanceType: t2.micro
-      KeyName: devops-girls-2023
+      KeyName: !Ref KeyName
       SecurityGroups:
         - !Ref SecurityGroupName
       IamInstanceProfile: !Ref InstanceProfile
@@ -47,3 +47,25 @@ Resources:
       EIP: !Ref EIP
       InstanceId: !Ref Instance
   # TODO: Add RecordSet
+  Record:
+      Type: AWS::Route53::RecordSet
+      Properties:
+        HostedZoneId: !Ref HostedZoneId
+        Name: !Ref DomainName
+        Type: A
+        TTL: "60"
+        ResourceRecords:
+          - !Ref EIP
+  Outputs:
+    InstanceId:
+      Description: EC2 Instance Id
+      Value: !Ref Instance
+    PublicIP:
+      Description: EC2 Instance Public IP Address
+      Value: !Ref EIP
+    PrivateIP:
+      Description: EC2 Instance Private IP Address
+      Value: !GetAtt Instance.PrivateIp
+    DomainName:
+      Description: Fully Qualified Domain Name
+      Value: !Ref DomainName
